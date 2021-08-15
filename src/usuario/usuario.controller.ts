@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { NestResponse } from 'src/core/http/nest-response';
+import { NestResponseBuilder } from 'src/core/http/nest-response-builder';
 import { Usuario } from './usuario.entity';
 import { UsuarioService } from './usuario.service';
 
@@ -17,11 +19,23 @@ export class UsuarioController {
   }
 
   @Post()
-  public cria(@Body() usuario: Usuario): Usuario {
+  public cria(@Body() usuario: Usuario): NestResponse {
     // this.usuarios.push(usuario);
     // throw new Error('Error no cadastro de usuário');
-    const usuarioCriado = this.usuarioService.cria(usuario);
 
-    return usuarioCriado;
+    const usuarioCriado = this.usuarioService.cria(usuario);
+    return new NestResponseBuilder()
+      .comStatus(HttpStatus.CREATED)
+      .comHeaders({
+        Location: `/users/${usuarioCriado.nomeDeUsuario}`,
+      })
+      .comBody(usuarioCriado)
+      .build();
+    // res
+    //  .status(HttpStatus.CREATED)
+    //  .location(`/users/${usuarioCriado.nomeDeUsuario}`)
+    //  .json(usuarioCriado);
+
+    // return usuarioCriado;
   }
 }
