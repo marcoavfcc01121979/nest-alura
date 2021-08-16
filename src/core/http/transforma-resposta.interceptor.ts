@@ -32,7 +32,15 @@ export class TransformaRespostaInterceptor implements NestInterceptor {
 
           nomesDosCabecalhos.forEach((nomeDoCabecalho) => {
             const valorDoCabecalho = headers[nomeDoCabecalho];
+            this.httpAdapter.setHeader(
+              response,
+              nomeDoCabecalho,
+              valorDoCabecalho,
+            );
           });
+          this.httpAdapter.status(response, status);
+
+          return body;
         }
 
         return respostaDoControlador;
